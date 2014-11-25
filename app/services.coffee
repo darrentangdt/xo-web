@@ -382,6 +382,12 @@ module.exports = angular.module 'xoWebApp.services', [
     xoObjects
 
   .service 'xo', (xoObjects, xoApi, notify) ->
+    inStarterEdition = (name) ->
+      return ->
+        notify.info {
+          title: name
+          message: 'This feature is only available in Starter Edition'
+        }
     action = (name, method, options) ->
       unless method
         return ->
@@ -432,7 +438,7 @@ module.exports = angular.module 'xoWebApp.services', [
       pool:
         disconnect: action 'Disconnect pool'
         new_sr: action 'New SR' #temp fix before creating SR
-        patch: action 'Upload patch', 'pool.patch', argsMapper: (pool) -> {pool}
+        patch: inStarterEdition 'Upload patch'
 
       host:
         attach:           action 'Atach host'#, 'host.attach'
@@ -479,9 +485,7 @@ module.exports = angular.module 'xoWebApp.services', [
         createSnapshot: action 'Create VM snapshot', 'vm.snapshot', {
           argsMapper: (id, name) -> {id, name}
         }
-        export: action 'Export VM', 'vm.export', {
-          argsMapper: (vm, compress = true) -> {vm, compress}
-        }
+        export: inStarterEdition 'Export VM'
         delete: action 'Delete VM', 'vm.delete', {
           argsMapper: (id, delete_disks) -> { id, delete_disks }
         }
@@ -489,9 +493,7 @@ module.exports = angular.module 'xoWebApp.services', [
         insertCd: action 'Insert disc', 'vm.insertCd', {
           argsMapper: (id, cd_id, force = false) -> { id, cd_id, force }
         }
-        import: action 'Import VM', 'vm.import', {
-          argsMapper: (host) -> { host }
-        }
+        import: inStarterEdition 'Import VM'
         migrate: action 'Migrate VM', 'vm.migrate', {
           argsMapper: (id, host_id) -> { id, host_id }
         }
